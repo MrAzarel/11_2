@@ -40,19 +40,35 @@ namespace _11_2
     {
         public static void Validate(object obj)
         {
-            PropertyInfo[] propList = obj.GetType().GetProperties();
-            FieldInfo[] fieldList = obj.GetType().GetFields();
+            Type type = typeof(MyType);           
+            object[] attributes = type.GetCustomAttributes(false);
+            foreach (Attribute attribute in attributes)
+            {
+                if (attribute is ValidateInt32Attribute)
+                {
+
+                }
+            }
+            //PropertyInfo[] propList = obj.GetType().GetProperties();
+            //FieldInfo[] fieldList = obj.GetType().GetFields();
+            //for (int i = 0; i < propList.Length; i++)
+            //{
+            //    if (true)
+            //    {
+
+            //    }
+            //}
         }
     }
 
     class MyType
     {
         [ValidateInt32(1, 5, true)]
-        int field1 = 5;
+        public int field1 = 5;
         [ValidateInt32(5, 32, false)]
-        int field2 = 10;
+        public int field2 = 10;
         [ValidateInt32(2, 6, true)]
-        int field3 = 20;
+        public int field3 = 20;
         [ValidateInt32(0, 50, false)]
         public int MyProperty { get; set; }
         [ValidateInt32(-3, 100, true)]
@@ -66,6 +82,9 @@ namespace _11_2
         static void Main(string[] args)
         {
             MyType type = new MyType();
+            type.MyProperty = 1;
+            type.MyProperty2 = 2;
+            type.StringProp= "hello";
             Int32Validate.Validate(type);
         }
     }
