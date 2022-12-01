@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Reflection;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 //TODO Уточнить про проверку полей и пропертей на INT
 //TODO Уточнить про ZeroEnabled
@@ -61,20 +63,44 @@ namespace _11_2
             //}
             PropertyInfo[] propList = obj.GetType().GetProperties();
             FieldInfo[] fieldList = obj.GetType().GetFields();
+            MemberInfo[] list = new MemberInfo[propList.Length + fieldList.Length];
+            
+            for (int i = 0; i < fieldList.Length; i++)
+                list[i] = fieldList[i];
+            int t = propList.Length;
+            for (int i = 0; i < propList.Length; i++)
+                list[i + t] = propList[i];
 
-            foreach (var item in propList)
+            Int32 check = 0;
+            foreach (var item in list)
             {
                 try
                 {
                     if (item.IsDefined(typeof(ValidateInt32Attribute)))
                     {
                         ValidateInt32Attribute currentAttribute = (ValidateInt32Attribute)item.GetCustomAttribute(typeof(ValidateInt32Attribute));
-                        if ((int)item.GetValue(obj) < currentAttribute.MinValue || 
-                            (int)item.GetValue(obj) > currentAttribute.MaxValue || 
-                            !currentAttribute.ZeroEnabled)
+                        switch (item.MemberType)
                         {
-                            throw new InvalidValueException(item.Name, (int)item.GetValue(obj), currentAttribute);
+                            case MemberTypes.Field:
+                                if ((int)((FieldInfo)item).GetValue(obj) < currentAttribute.MinValue ||
+                                (int)((FieldInfo)item).GetValue(obj) > currentAttribute.MaxValue ||
+                                !currentAttribute.ZeroEnabled ||
+                                item.GetType() == check.GetType())
+                                {
+                                    throw new InvalidValueException(item.Name, (int)((FieldInfo)item).GetValue(obj), currentAttribute);
+                                }
+                                break;
+                            case MemberTypes.Property:
+                                if ((int)((PropertyInfo)item).GetValue(obj) < currentAttribute.MinValue ||
+                                (int)((PropertyInfo)item).GetValue(obj) > currentAttribute.MaxValue ||
+                                !currentAttribute.ZeroEnabled ||
+                                item.GetType() == check.GetType())
+                                {
+                                    throw new InvalidValueException(item.Name, (int)((PropertyInfo)item).GetValue(obj), currentAttribute);
+                                }
+                                break;
                         }
+
 
                     }
                 }
