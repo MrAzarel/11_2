@@ -3,11 +3,6 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-//TODO Уточнить про проверку полей и пропертей на INT
-//TODO Уточнить про ZeroEnabled
-//TODO Реализовать функционал для полей
-
-
 namespace _11_2
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
@@ -53,14 +48,6 @@ namespace _11_2
     {
         public static void Validate(object obj)
         {
-            //Type type = typeof(MyType);           
-            //object[] attributes = type.GetCustomAttributes(false);
-            //foreach (Attribute attribute in attributes)
-            //{
-            //    if (attribute is ValidateInt32Attribute)
-            //    {
-            //    }
-            //}
             PropertyInfo[] propList = obj.GetType().GetProperties();
             FieldInfo[] fieldList = obj.GetType().GetFields();
             MemberInfo[] list = new MemberInfo[propList.Length + fieldList.Length];
