@@ -54,7 +54,7 @@ namespace _11_2
             
             for (int i = 0; i < fieldList.Length; i++)
                 list[i] = fieldList[i];
-            int t = propList.Length;
+            int t = fieldList.Length;
             for (int i = 0; i < propList.Length; i++)
                 list[i + t] = propList[i];
 
